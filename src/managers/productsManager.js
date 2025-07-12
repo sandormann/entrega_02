@@ -1,14 +1,22 @@
+import fs from 'fs';
+
 class ProductsManager{
 	constructor(){
 		this.productsCollection = [];
+		this.path = './src/db/productos.json';
 	}
 
 	//Métodos
 
 	getProducts = async() => {
 		try{
-			console.log('Obteniendo los porductos', this.productsCollection)
+			const productsList = await fs.promises.readFile(this.path, 'utf-8')
+			return JSON.parse(productsList);
+			console.log('Lista de productos',productsList)
 		}catch(err){
+			console.log('No se pudo obtener la lista de productos');
+			await fs.promises.writeFile(this.path, JSON.stringify([]))
+			return [];
 		}
 	}
 
@@ -22,13 +30,17 @@ class ProductsManager{
 		console.log('Producto eliminado', pid);
 	}
 	addProduct = async(newProduct) => {
-		try{ 
+		try{
+			const products = await this.getProducts();
 			//Agregar al arreglo
-			this.productsCollection.push(newProduct);
+			products.push(newProduct);
+			await fs.promises.writeFile(this.path, JSON.stringify(products, null, 2));
+			console.log('Agregando un producto', products)
 			return newProduct;
-			console.log('Agregando un producto', this.productsCollection)
-		}catch(err){}
-		
+		}catch(error){
+			console.log('No se pudo agregar el producto', error.message);
+			throw error;
+		}		
 	}
 	updateProduct = async(pid, updatedFields) => {
 		const product = this.productsCollection.find(u => u.pid === parseInt(pid))
