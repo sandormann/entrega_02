@@ -1,12 +1,100 @@
 import { Router } from 'express';
 const cartRouter = Router();
 
-let cartCollection = [];
+import CartsManager from '../managers/cartsManager.js';
+const cartsManager = new CartsManager();
 
 //Listar carrito
-cartRouter.get('/', (req,res)=>{
-	res.status(200).json({status: 'success', cartCollection });
+cartRouter.get('/', async(req,res)=>{
+	try{
+		const carts = cartsManager.getCarts();
+		res.status(200).json({
+			status: 'success', 
+			carts 
+		});		
+	}catch(error){
+		res.status(500).json({
+			status:'error',
+			msg:'Error al obtenes los carritos'
+		});
+	}
+
 });
+//Listar carrito por id
+cartRouter.get('/:cid',async(req,res)=>{
+	try{
+		const { cid } = req.params;
+		const cart = await cartsManager.getCartById(cid);
+		return res.status(200).json({
+			status:"success",
+			cid,
+			msg: cart
+		});
+	}catch(error){
+		return res.status(404).json({
+			status:"Error", 
+			msg:'Carrito no encontrado',
+		})
+	}
+
+})
+
+//crear carrito
+cartRouter.post('/',async(req,res)=>{
+	try{
+			const newCart = { 
+					products: []
+				}
+
+			const cart = await cartsManager.addCart(newCart);
+			return res.status(201).json({
+					status:'success',
+					newCart
+				});	
+	}catch(error){
+		console.log('Error al crear el carrito', error);
+		return res.status(500).json({
+					status:'Error',
+					msg:'Error del servidor'
+				});
+	}
+
+	cartsCollection.push(newCart);
+	res.status(200).json({
+		status:"success",
+		newCart
+	});
+});
+
+//Agregar producto al carrito
+cartRouter.post('/:cid/products/:pid',(req,res)=>{
+	const { cid, pid } = req.params;
+	const cart = cartsCollection.find(c => c.cid === parseInt(cid))
+	if(!cart){
+		return res.status(404).json({status:"Error", msg:"Carrito no encontrado"})
+	}
+
+	//Buscar producto en el carrito
+	const product = cart.products.find(p => p.pid === parseInt(pid));
+	
+	if(product){
+		product.quantity++;
+		return res.status(200).json({
+			status:'success', 
+			cart
+		});
+		
+	}else{
+		const newProduct = { 
+			pid: cart.products.length + 1, 
+			quantity:1
+		};
+		cart.products.push(newProduct);
+		return res.status(201).json({
+			status: "success", 
+			cart
+		});
+	}
+})
+
 export default cartRouter;
-//Agregar un carrito
-// export 

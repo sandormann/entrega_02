@@ -12,7 +12,7 @@ productsRouter.get('/', async (req,res) => {
 		const products = await productsManager.getProducts();
 		return res.status(200).json({ 
 					status: 'success', 
-					products: productsManager.productsCollection
+					products
 				});	
 	}catch(error){
 		res.status(500).json({
@@ -30,7 +30,6 @@ productsRouter.post('/', async(req,res) => {
 		const { title,description,code,price,status,category,thumbnails } = req.body;
 	
 		const newProduct = {  
-			pid:productsManager.productsCollection.length + 1,
 			title,
 			description,
 			code,
