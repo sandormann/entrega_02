@@ -25,19 +25,23 @@ cartRouter.get('/:cid',async(req,res)=>{
 	try{
 		const { cid } = req.params;
 		const cart = await cartsManager.getCartById(cid);
-		return res.status(200).json({
+		if(!cart){
+			res.status(404).json({
+				status:"Error", 
+				msg:'Carrito no encontrado',
+			})
+		}
+		
+		res.status(200).json({
 			status:"success",
 			cid,
 			msg: cart
-		});
-	}catch(error){
-		return res.status(404).json({
-			status:"Error", 
-			msg:'Carrito no encontrado',
 		})
+	}catch(error){
+		console.log('Error en el servidor')
 	}
-
-})
+		
+})		
 
 //crear carrito
 cartRouter.post('/',async(req,res)=>{
@@ -52,49 +56,55 @@ cartRouter.post('/',async(req,res)=>{
 					newCart
 				});	
 	}catch(error){
-		console.log('Error al crear el carrito', error);
 		return res.status(500).json({
 					status:'Error',
 					msg:'Error del servidor'
 				});
 	}
-
-	cartsCollection.push(newCart);
-	res.status(200).json({
-		status:"success",
-		newCart
-	});
 });
 
 //Agregar producto al carrito
-cartRouter.post('/:cid/products/:pid',(req,res)=>{
+cartRouter.post('/:cid/products/:pid',async(req,res)=>{
 	const { cid, pid } = req.params;
-	const cart = cartsCollection.find(c => c.cid === parseInt(cid))
-	if(!cart){
-		return res.status(404).json({status:"Error", msg:"Carrito no encontrado"})
-	}
+	try{
 
-	//Buscar producto en el carrito
-	const product = cart.products.find(p => p.pid === parseInt(pid));
-	
-	if(product){
-		product.quantity++;
-		return res.status(200).json({
-			status:'success', 
-			cart
-		});
+		const cart = cartsManager.addProductToCart(cid, pid);
 		
-	}else{
-		const newProduct = { 
-			pid: cart.products.length + 1, 
-			quantity:1
-		};
-		cart.products.push(newProduct);
-		return res.status(201).json({
-			status: "success", 
-			cart
+		if(!cart){
+			return res.status(404).json({
+				status:'Error',
+				msg: 'Carrito no encontrado'				
+			})
+		}
+
+		return res.status(200).json({
+				status:'success', 
+				cart
 		});
+	}catch(error){
+		return res.status(500).json({
+				status:"Error", 
+				msg:"Error en el servidor"
+			});
+	}
+	
+	
+})
+cartRouter.delete('/:cid', async(req,res)=> {
+	const { cid } = req.params;
+
+	try{
+		const cart = await cartsManager.deleteCart(cid);
+		return res.status(200).json({
+			status: 'success',
+			msg:'Carrito eliminado'
+		})
+	}catch(error){
+		return res.status(500).json({
+			status: 'error',
+			msg:'Error en el servidor'
+		})
+
 	}
 })
-
 export default cartRouter;
