@@ -1,16 +1,10 @@
 import { Router } from 'express';
 const viewsRouter = Router();
 
-viewsRouter.get('/',(req, res) => {
-	res.render('products', { 
-		link1: 'Productos', 
-		link2:'Formulario' 
-	});
+viewsRouter.get('/products',(req, res) => {
+	res.render('products');
 });
 viewsRouter.get('/form',(req, res) => {
-	res.render('form', { 
-		link1: 'Productos', 
-		link2:'Formulario' 
-	});
+	res.render('form');
 });
 export default viewsRouter;

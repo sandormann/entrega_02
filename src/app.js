@@ -4,7 +4,10 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import viewsRouter from './routes/views.router.js';
 import allRoutes from './routes/index.js';
-
+import http from 'http';
+import { Server } from 'socket.io';
+import ProductsManager from './managers/productsManager.js';
+const productsManager = new ProductsManager();
 const app = express();
 const PORT = 8000;
 const __filename = fileURLToPath(import.meta.url);
@@ -12,6 +15,25 @@ const __dirname = path.dirname(__filename);
 
 //Carpeta Public
 app.use(express.static(path.join(__dirname, 'public')))
+
+//Servidor con http
+const serverHttp = http.createServer(app);
+//Se inica el servidor con io
+const io = new Server(serverHttp);
+
+let messages = [];
+io.on('connection', async(socket)=>{
+	console.log("Cliente conectado", socket.id);
+
+	const products = await productsManager.getProducts();
+	socket.emit('products', products);
+
+	socket.on('eliminarProducto', async(id)=>{
+		await productsManager.deleteProduct(id);
+		//Envío del resultado
+		io.emit('products', await productsManager.getProducts());
+	})
+})
 
 //Config HBS
 app.engine('handlebars', engine({
@@ -28,7 +50,9 @@ app.set('views', path.join(__dirname, 'views'));
 app.use('/', viewsRouter);
 //Rutas del router
 app.use('/api', allRoutes);
-
-app.listen(PORT, ()=>{
+//Config websocket
+serverHttp.listen(PORT, ()=>{
 	console.log(`On port ${ PORT }`)
 });
+
+

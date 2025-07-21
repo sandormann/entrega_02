@@ -36,10 +36,56 @@ body{
 	width: 80%;
 	min-height: calc(100vh - 100px);
 	margin: 0 auto;
-	outline: var(--red-line);			
+	/*outline: var(--red-line);			*/
 }
 .gallery{
 	width: 100%;
 	min-height: 100%;
+	margin-top: 10px;
+
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	gap:20;
 }
-	
+.gallery_title{
+	width: 100%;
+	padding: 10px;
+	margin-top: 10px;
+	text-align: center;
+}
+.items_container{
+	width: 90%;
+	margin: 5px auto;
+	padding: 15px;
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-around;
+	gap:2px;
+}
+.card{
+	width: 20%;
+	min-height: 150px;
+	display: flex;
+	flex-direction: column;
+	/*justify-content: space-around;*/
+	padding: 10px;
+	border: 1px solid #ccc;
+	background: white;
+	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08); 
+	border-radius: 10px;
+}
+.card_title{
+	font-size: 1.2rem;
+	font-weight: 300;
+	letter-spacing: .5px;
+}
+.card_text{
+	letter-spacing: 5;
+}
+.btn_delete{
+	width: 40%;
+	margin-top: 5px;
+	padding-right: 1px 5px;
+	border-radius: 10px;
+}

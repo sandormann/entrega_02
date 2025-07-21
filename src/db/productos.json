@@ -28,5 +28,15 @@
     "category": "Kleidung",
     "thumbnails": "http://placeimg.com/640/480",
     "pid": 4
+  },
+  {
+    "title": "Handcrafted Granite Hat",
+    "description": "Bacon",
+    "code": "l",
+    "price": "895.33",
+    "status": "true",
+    "category": "Bike",
+    "thumbnails": "http://placeimg.com/640/480",
+    "pid": 5
   }
 ]
