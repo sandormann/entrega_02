@@ -26,13 +26,19 @@ io.on('connection', async(socket)=>{
 	console.log("Cliente conectado", socket.id);
 
 	const products = await productsManager.getProducts();
-	socket.emit('products', products);
+	socket.emit('showProducts', products);
 
 	socket.on('eliminarProducto', async(id)=>{
 		await productsManager.deleteProduct(id);
 		//Envío del resultado
-		io.emit('products', await productsManager.getProducts());
+		io.emit('showProducts', await productsManager.getProducts());
+	});
+
+	socket.on('addProduct', async(producto)=>{
+		await productsManager.addProduct(producto);
 	})
+
+	
 })
 
 //Config HBS

@@ -16,7 +16,9 @@ document.addEventListener('DOMContentLoaded',()=>{
 				<p class="card_title">${p.title}</p>
 				<p class="card_text">${p.description}</p>
 				<p class="card_price">$ ${p.price}</p>
-				<button class="btn_delete" data-id="${p.pid}">Delete</button>
+				<div class="btn_container">
+					<button class="btn_delete" data-id="${p.pid}">Delete</button>
+				</div>
 			`
 			productsContainer.appendChild(card)
 
@@ -27,7 +29,7 @@ document.addEventListener('DOMContentLoaded',()=>{
 
 	}
 
-	socket.on('products', (data)=>{
+	socket.on('showProducts', (data)=>{
 		renderProducts(data)
 	});
 
